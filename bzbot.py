@@ -1,9 +1,9 @@
 import requests
 import time
 from telegram import Bot
-import os
-TOKEN =os.environ.get("TOKEN")
-CHAT_ID = os.environ.get("CHAT_ID")
+
+TOKEN = "IL_TUO_TOKEN"
+CHAT_ID = 123456789
 
 bot = Bot(token=TOKEN)
 
@@ -12,13 +12,9 @@ storico = []
 def get_prezzo():
     url = "https://api.hypixel.net/skyblock/bazaar"
     data = requests.get(url).json()
+    return data["products"]["ENCHANTED_MYCELIUM"]["quick_status"]["sellPrice"]
 
-    prodotto = data["products"]["ENCHANTED_MYCELIUM"]
-    prezzo = prodotto["quick_status"]["sellPrice"]
-
-    return prezzo
-
-def controlla():
+while True:
     prezzo = get_prezzo()
     storico.append(prezzo)
 
@@ -27,14 +23,15 @@ def controlla():
 
     media = sum(storico) / len(storico)
 
-    print(f"{prezzo:.2f} | media {media:.2f}")
+    # decisione semplice
+    if prezzo > media * 1.10:
+        stato = "🔴 VENDI"
+    else:
+        stato = "🟡 HOLD"
 
-    if prezzo > media * 1.15:
-        bot.send_message(
-            chat_id=CHAT_ID,
-            text=f"🔥 VENDI ENCHANTED MYCELIUM!\nPrezzo: {prezzo:.2f}\nMedia: {media:.2f}"
-        )
+    messaggio = f"{stato}\nPrezzo: {prezzo:.2f}\nMedia: {media:.2f}"
 
-while True:
-    controlla()
-    time.sleep(300)
+    print(messaggio)
+    bot.send_message(chat_id=CHAT_ID, text=messaggio)
+
+    time.sleep(300)  # ogni 5 min
