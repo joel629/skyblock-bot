@@ -1,9 +1,11 @@
 import requests
 import time
-from telegram import Bot
 import os
+import asyncio
+from telegram import Bot
+
 TOKEN = os.getenv("TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+CHAT_ID = int(os.getenv("CHAT_ID"))
 
 bot = Bot(token=TOKEN)
 
@@ -14,24 +16,26 @@ def get_prezzo():
     data = requests.get(url).json()
     return data["products"]["ENCHANTED_MYCELIUM"]["quick_status"]["sellPrice"]
 
-while True:
-    prezzo = get_prezzo()
-    storico.append(prezzo)
+async def main():
+    while True:
+        prezzo = get_prezzo()
+        storico.append(prezzo)
 
-    if len(storico) > 30:
-        storico.pop(0)
+        if len(storico) > 30:
+            storico.pop(0)
 
-    media = sum(storico) / len(storico)
+        media = sum(storico) / len(storico)
 
-    # decisione semplice
-    if prezzo > media * 1.10:
-        stato = "🔴 VENDI"
-    else:
-        stato = "🟡 HOLD"
+        if prezzo > media * 1.10:
+            stato = "🔴 VENDI"
+        else:
+            stato = "🟡 HOLD"
 
-    messaggio = f"{stato}\nPrezzo: {prezzo:.2f}\nMedia: {media:.2f}"
+        messaggio = f"{stato}\nPrezzo: {prezzo:.2f}\nMedia: {media:.2f}"
 
-    print(messaggio)
-    bot.send_message(chat_id=CHAT_ID, text=messaggio)
+        print(messaggio)
+        await bot.send_message(chat_id=CHAT_ID, text=messaggio)
 
-    time.sleep(300)  # ogni 5 min
+        await asyncio.sleep(300)
+
+asyncio.run(main())
