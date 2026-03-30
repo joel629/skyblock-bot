@@ -5,7 +5,7 @@ import asyncio
 from telegram import Bot
 
 TOKEN = os.getenv("TOKEN")
-CHAT_ID = int(os.getenv("CHAT_ID")
+CHAT_ID = int(os.getenv("CHAT_ID"))
 
 bot = Bot(token=TOKEN)
 
