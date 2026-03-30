@@ -4,8 +4,8 @@ import os
 import asyncio
 from telegram import Bot
 
-TOKEN = "8607652143:AAHX-kkmNOoPb6VWadIcm3Rxi_AhlTYg4CQ"
-CHAT_ID = "667044762" 
+TOKEN = os.getenv("TOKEN")
+CHAT_ID = int(os.getenv("CHAT_ID")) 
 
 
 bot = Bot(token=TOKEN)
@@ -67,7 +67,7 @@ async def main():
             await bot.send_message(chat_id=CHAT_ID, text=messaggio)
             ultimo_stato = stato
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(300)
 
 asyncio.run(main())
 
