@@ -63,11 +63,11 @@ async def main():
         print(messaggio)
 
         # evita spam (manda solo se cambia stato)
-        if stato != ultimo_stato:
+        if prezzo_lordo != ultimo_prezzo:
             await bot.send_message(chat_id=CHAT_ID, text=messaggio)
-            ultimo_stato = stato
+            ultimo_prezzo = prezzo_lordo
 
-        await asyncio.sleep(300)
+        await asyncio.sleep(600)
 
 asyncio.run(main())
 
