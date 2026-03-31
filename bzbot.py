@@ -25,7 +25,7 @@ def get_prezzo():
     return prezzo_netto, prezzo_lordo
 
 async def main():
-    ultimo_stato = ""
+    ultimo_prezzo = ""
 
     while True:
         prezzo_netto, prezzo_lordo = get_prezzo()
