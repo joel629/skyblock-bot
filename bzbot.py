@@ -27,9 +27,22 @@ conn.commit()
 
 # --- FUNZIONI DATABASE ---
 def salva_prezzo(prezzo):
+    # controlla ultimo prezzo salvato
+    cur.execute("""
+        SELECT prezzo FROM prezzi
+        ORDER BY timestamp DESC
+        LIMIT 1
+    """)
+    last = cur.fetchone()
+
+    # se è uguale, non salvare
+    if last and last[0] == prezzo:
+        return
+
+    # altrimenti salva
     cur.execute("INSERT INTO prezzi (prezzo) VALUES (%s)", (prezzo,))
-    
-    # mantiene solo ultimi 500
+
+    # mantieni solo ultimi 500
     cur.execute("""
         DELETE FROM prezzi
         WHERE id NOT IN (
@@ -38,7 +51,7 @@ def salva_prezzo(prezzo):
             LIMIT 500
         )
     """)
-    
+
     conn.commit()
 
 def prendi_storico(limit=500):
